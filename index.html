@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Content Analyzer</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h1>Blog Content Analyzer</h1>
+        <button onclick="fetchContent()">Fetch Blog Content</button>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        async function fetchContent() {
+            try {
+                // Using rss2json as a CORS proxy
+                const apiUrl = 'https://api.rss2json.com/v1/api.json';
+                const blogUrl = 'https://confessionsofanoriginal.blogspot.com/feeds/posts/default';
+                
+                const response = await axios.get(apiUrl, {
+                    params: {
+                        rss_url: blogUrl,
+                        api_key: 'free' // Using free tier
+                    }
+                });
+
+                const results = document.getElementById('results');
+                results.innerHTML = `<pre>${JSON.stringify(response.data, null, 2)}</pre>`;
+                
+                // Save to localStorage for analysis
+                localStorage.setItem('blogData', JSON.stringify(response.data));
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('results').innerHTML = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
